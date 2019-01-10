@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
 			std::string base = "http://setup.roblox.com/";
 			if (year == 2008) {
 				std::cout << "Downloading.." << std::endl;
-				std::vector<std::string> todownload = { "RobloxApp.zip", "Libraries.zip", "redist.zip", "content-music.zip", "content-fonts.zip", "content-textures.zip", "content-sounds.zip", "content-sky.zip" };
+				std::vector<std::string> todownload = { "RobloxProxy.zip", "RobloxApp.zip", "Libraries.zip", "redist.zip", "content-music.zip", "content-fonts.zip", "content-textures.zip", "content-sounds.zip", "content-sky.zip" };
 				for (std::string x : todownload) {
 					SaveFileFromInternet("RVDR-1.1 by John", std::string(base + hash + "-" + x).c_str(), std::string(hash + "-" + x.c_str()).c_str());
 				}
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
 			}
 			else if (year == 2009 || year == 2010) {
 				std::cout << "Downloading.." << std::endl;
-				std::vector<std::string> todownload = { "RobloxApp.zip", "Libraries.zip", "redist.zip", "content-music.zip", "content-fonts.zip", "content-textures.zip", "content-textures2.zip", "content-particles.zip", "content-sounds.zip", "content-sky.zip", "content-materials.zip" };
+				std::vector<std::string> todownload = { "RobloxProxy.zip", "shaders.zip", "RobloxApp.zip", "Libraries.zip", "redist.zip", "content-music.zip", "content-fonts.zip", "content-textures.zip", "content-textures2.zip", "content-particles.zip", "content-sounds.zip", "content-sky.zip", "content-materials.zip" };
 				for (std::string x : todownload) {
 					if (SaveFileFromInternet("RVDR-1.0 by John", std::string(base + hash + "-" + x).c_str(), std::string(hash + "-" + x.c_str()).c_str()) == 2) {
 						std::remove(std::string(hash + "-" + x.c_str()).c_str());
@@ -139,6 +139,9 @@ int main(int argc, char* argv[]) {
 				CreateDirectory(std::string(hash + "/content/sky").c_str(), 0);
 				if (file_exists(std::string(hash + "-" + "content-particles.zip").c_str()) == true) {
 					CreateDirectory(std::string(hash + "/content/particles").c_str(), 0);
+				}
+				if (file_exists(std::string(hash + "-" + "shaders.zip").c_str()) == true) {
+					CreateDirectory(std::string(hash + "/shaders").c_str(), 0);
 				}
 				if (file_exists(std::string(hash + "-" + "content-materials.zip").c_str()) == true) {
 					CreateDirectory(std::string(hash + "/content/materials").c_str(), 0);
@@ -178,9 +181,9 @@ int main(int argc, char* argv[]) {
 				}
 				std::cout << "Done!" << std::endl;
 			}
-			else if (year == 2011 || year == 2012) {
+			else if (year == 2011 || year == 2012 || year == 2013) {
 				std::cout << "Downloading.." << std::endl;
-				std::vector<std::string> todownload = { "RobloxApp.zip", "Libraries.zip", "redist.zip", "content-music.zip", "content-fonts.zip", "content-textures.zip", "content-textures2.zip", "content-textures3.zip", "BuiltInPlugins.zip", "shaders.zip", "content-particles.zip", "content-sounds.zip", "content-materials.zip", "content-sky.zip" };
+				std::vector<std::string> todownload = { "RobloxProxy.zip", "RobloxApp.zip", "RobloxStudio.zip", "imageformats.zip", "Libraries.zip", "redist.zip", "content-music.zip", "content-fonts.zip", "content-textures.zip", "content-textures2.zip", "content-textures3.zip", "BuiltInPlugins.zip", "shaders.zip", "content-particles.zip", "content-sounds.zip", "content-materials.zip", "content-sky.zip" };
 				for (std::string x : todownload) {
 					if (SaveFileFromInternet("RVDR-1.0 by John", std::string(base + hash + "-" + x).c_str(), std::string(hash + "-" + x.c_str()).c_str()) == 2) {
 						std::remove(std::string(hash + "-" + x.c_str()).c_str());
@@ -204,13 +207,21 @@ int main(int argc, char* argv[]) {
 				if (file_exists(std::string(hash + "-" + "content-materials.zip").c_str()) == true) {
 					CreateDirectory(std::string(hash + "/content/materials").c_str(), 0);
 				}
+				if (file_exists(std::string(hash + "-" + "content-textures3.zip").c_str()) == true) {
+					CreateDirectory(std::string(hash + "/PlatformContent").c_str(), 0);
+					CreateDirectory(std::string(hash + "/PlatformContent/pc").c_str(), 0);
+					CreateDirectory(std::string(hash + "/PlatformContent/pc/textures").c_str(), 0);
+				}
 				for (std::string x : todownload) {
 					if (file_exists(std::string(hash + "-" + x).c_str()) == true) {
 						HZIP zip = OpenZip(std::string(hash + "-" + x.c_str()).c_str(), 0);
 						if (x.substr(0, 8) == "content-") {
 							std::string part = x.substr(8);
 							if (part.find("textures") != std::string::npos) {
-								SetUnzipBaseDir(zip, std::string(hash + "/content/textures").c_str());
+								if (x != "content-textures3.zip")
+									SetUnzipBaseDir(zip, std::string(hash + "/content/textures").c_str());
+								else
+									SetUnzipBaseDir(zip, std::string(hash + "/PlatformContent/pc/textures").c_str());
 							}
 							else {
 								SetUnzipBaseDir(zip, std::string(hash + "/content/" + part.substr(0, part.find(".zip"))).c_str());
@@ -218,9 +229,15 @@ int main(int argc, char* argv[]) {
 						}
 						else if (x == "BuiltInPlugins.zip") {
 							SetUnzipBaseDir(zip, std::string(hash + "/BuiltInPlugins").c_str());
-						} 
+						}
 						else if (x == "shaders.zip") {
 							SetUnzipBaseDir(zip, std::string(hash + "/shaders").c_str());
+						}
+						else if (x == "content-textures.zip") {
+							SetUnzipBaseDir(zip, std::string(hash + "/content/textures").c_str());
+						}
+						else if (x == "content-textures2.zip") {
+							SetUnzipBaseDir(zip, std::string(hash + "/content/textures").c_str());
 						}
 						else {
 							SetUnzipBaseDir(zip, hash.c_str());
@@ -233,8 +250,8 @@ int main(int argc, char* argv[]) {
 							UnzipItem(zip, j, zipentry.name);
 						}
 						CloseZip(zip);
+						}
 					}
-				}
 				std::fstream fs;
 				fs.open(std::string(hash + "/AppSettings.xml"), std::ios::out);
 				fs << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Settings>\n\t<ContentFolder>content</ContentFolder>\n\t<BaseUrl>http://www.roblox.com</BaseUrl>\n</Settings>";
